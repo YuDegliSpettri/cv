@@ -17,12 +17,12 @@ Prima delle prove annotare le preferenze esistenti. Ripristinare zoom, opzioni d
 
 ## Matrice minima
 
-| Percorso | Ambiente previsto | Scopo |
-| --- | --- | --- |
-| Tastiera e zoom reale | Safari installato su macOS | Focus, link e reflow attraverso l'interfaccia reale |
-| Lettura assistita | Safari + VoiceOver con voci italiana e inglese | Struttura, lettura continua e cambi di lingua |
-| Stampa | Anteprima Safari, A4 e Letter, sfondi disattivati | Paginazione e leggibilità senza sfondi |
-| Controllo complementare | Chromium/WebKit di Playwright, font locali e fallback | Geometria, CSP, frammenti, spaziatura e stampa CSS |
+| Percorso                | Ambiente previsto                                     | Scopo                                               |
+| ----------------------- | ----------------------------------------------------- | --------------------------------------------------- |
+| Tastiera e zoom reale   | Safari installato su macOS                            | Focus, link e reflow attraverso l'interfaccia reale |
+| Lettura assistita       | Safari + VoiceOver con voci italiana e inglese        | Struttura, lettura continua e cambi di lingua       |
+| Stampa                  | Anteprima Safari, A4 e Letter, sfondi disattivati     | Paginazione e leggibilità senza sfondi              |
+| Controllo complementare | Chromium/WebKit di Playwright, font locali e fallback | Geometria, CSP, frammenti, spaziatura e stampa CSS  |
 
 Firefox/NVDA su Windows e dispositivi iOS possono estendere la matrice quando disponibili; non dichiararli verificati sulla base di WebKit headless. Per una prova con un altro browser reale registrare la sostituzione e le sue impostazioni. Un PDF generato con Chromium e ispezionato visivamente è una prova della sua stampa, non dell'anteprima Safari.
 

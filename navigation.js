@@ -43,7 +43,8 @@
     currentSection = current;
     for (const link of links) {
       if (link.hash === `#${current}`) {
-        if (link.getAttribute('aria-current') !== 'location') link.setAttribute('aria-current', 'location');
+        if (link.getAttribute('aria-current') !== 'location')
+          link.setAttribute('aria-current', 'location');
       } else if (link.hasAttribute('aria-current')) link.removeAttribute('aria-current');
     }
   }
@@ -57,7 +58,8 @@
     if (root.style.getPropertyValue('--header-offset') !== cssOffset) {
       root.style.setProperty('--header-offset', cssOffset);
     }
-    const indexPosition = index.getBoundingClientRect().height + offset <= window.innerHeight ? 'sticky' : 'static';
+    const indexPosition =
+      index.getBoundingClientRect().height + offset <= window.innerHeight ? 'sticky' : 'static';
     if (index.style.getPropertyValue('--index-position') !== indexPosition) {
       index.style.setProperty('--index-position', indexPosition);
     }
@@ -73,7 +75,7 @@
       rootMargin: `-${nextReadingLine}px 0px -${viewportHeight - nextReadingLine - 1}px 0px`,
       threshold: 0
     });
-    sections.forEach(section => nextObserver.observe(section));
+    sections.forEach((section) => nextObserver.observe(section));
     observer?.disconnect();
     observer = nextObserver;
     readingLine = nextReadingLine;
@@ -83,7 +85,10 @@
 
   if (canObserveSections) {
     // Match the 1px rounding tolerance used by the bottom-of-page check.
-    new IntersectionObserver(requestSectionUpdate, { rootMargin: '0px 0px 1px 0px', threshold: 1 }).observe(footer);
+    new IntersectionObserver(requestSectionUpdate, {
+      rootMargin: '0px 0px 1px 0px',
+      threshold: 1
+    }).observe(footer);
     window.addEventListener('hashchange', requestSectionUpdate);
   }
   if ('ResizeObserver' in window) {

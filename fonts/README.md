@@ -2,10 +2,10 @@
 
 Manrope e DM Sans sono distribuiti dal medesimo hosting della pagina. I file WOFF2 sono copie senza modifiche dei subset `latin` serviti da Google Fonts al sito il 4 ottobre 2026; non è previsto alcun download dal provider durante la visita o la build.
 
-| Famiglia | File | Byte | Pesi dichiarati nel CSS |
-| --- | --- | ---: | --- |
-| Manrope | `manrope-latin-variable.woff2` | 24.576 | 400–800 |
-| DM Sans | `dm-sans-latin-variable.woff2` | 36.980 | 400–700 |
+| Famiglia | File                           |   Byte | Pesi dichiarati nel CSS |
+| -------- | ------------------------------ | -----: | ----------------------- |
+| Manrope  | `manrope-latin-variable.woff2` | 24.576 | 400–800                 |
+| DM Sans  | `dm-sans-latin-variable.woff2` | 36.980 | 400–700                 |
 
 I due file hanno un asse variabile `wght`: Manrope 200–800 e DM Sans 100–1000. Il CSS espone soltanto l'intervallo necessario al CV e conserva `font-display: swap`, gli stessi intervalli Unicode e Arial/sans-serif come fallback. Il subset comprende le lettere accentate italiane; i simboli non compresi continuano a usare i caratteri di sistema. Per ulteriori alfabeti, riesaminare i subset.
 
