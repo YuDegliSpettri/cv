@@ -60,6 +60,15 @@ test('[CP-01] offset auto usa il vero IntersectionObserver senza margini NaN', a
   for (const margin of margins) expect(margin.split(' ').map(parseFloat).every(Number.isFinite), `Finite rootMargin required: ${margin}`).toBe(true);
 });
 
+test('[HAR-02] movimento ridotto applicato al browser e al CSS', async ({ page }) => {
+  await openSite(page);
+  const motion = await page.evaluate(() => ({
+    reduced: matchMedia('(prefers-reduced-motion: reduce)').matches,
+    scrollBehavior: getComputedStyle(document.documentElement).scrollBehavior
+  }));
+  expect(motion).toEqual({ reduced: true, scrollBehavior: 'auto' });
+});
+
 for (const api of ['IntersectionObserver', 'ResizeObserver']) {
   test(`[CP-01] navigazione senza ${api}`, async ({ page }, testInfo) => {
     await page.addInitScript(api => delete window[api], api);

@@ -32,6 +32,8 @@ npm run test:regressions
 
 La fixture registra le violazioni CSP e fa fallire i normali test se ne rileva. `tests/security.spec.cjs` verifica il blocco nativo degli script esterni e inline, la posizione della CSP prima delle risorse e l'assenza del Referer nei collegamenti in uscita. Le risposte di prova sono controllate e i test ripetono gli stessi stimoli senza il rispettivo meta per confermare che l'effetto dipenda dalla policy. Le sole violazioni ammesse sono quelle attese nel test del blocco CSP.
 
+Il harness applica il movimento ridotto tramite `use.contextOptions.reducedMotion`: la versione fissata di Playwright non inoltra `use.reducedMotion` al contesto della fixture. Il controllo HAR-02 verifica nel browser sia `matchMedia` sia lo `scroll-behavior: auto` effettivo, così un'opzione ignorata non può rendere intermittenti i test di resize durante lo scorrimento animato. Riferimento: [difetto del runner Playwright](https://github.com/microsoft/playwright/issues/42001).
+
 `test:regressions` esporta in una cartella temporanea i quattro asset della revisione `4e4f03962aa7abe2aff7644e80a3a3ff3b06c579` e controlla sette casi noti, inclusi il caricamento dei font esterni e l'assenza della CSP. Ogni test selezionato deve fallire per il motivo atteso, con exit code 1; il comando complessivo passa soltanto se tutti i difetti vengono rilevati. La cronologia Git deve contenere quella revisione. I sorgenti di lavoro non vengono modificati.
 
 ```sh
@@ -49,11 +51,37 @@ Un fallimento produce screenshot, trace e dettagli in `test-results/` e un repor
 
 Su un push a `main`, il job `Package site` dipende da `Quality checks`, e `Deploy Pages` dipende dal pacchetto. Pull request ed esecuzioni manuali eseguono soltanto i controlli. Il pacchetto `_site/` contiene esclusivamente gli otto file elencati in `scripts/site-files.cjs`, inclusi i due font e le due licenze; `npm run package:site` consente di prepararlo anche localmente. Nessun download di font viene eseguito durante la build. Nessuna cartella di analisi o del harness viene inclusa.
 
-Per attivare il gate sul sito ospitato:
+Il 4 ottobre 2026 sono state applicate le impostazioni remote seguenti:
 
-1. In **Settings → Pages → Build and deployment → Source**, scegliere **GitHub Actions** prima di integrare il workflow su `main`. La pubblicazione diretta da una branch aggira questo workflow.
-2. Pubblicare i file del harness e del workflow con il normale processo Git. Verificare una prima esecuzione di `Quality checks` e un deploy riuscito dello stesso commit.
-3. Se si vuole impedire anche il merge di cambiamenti non verificati, impostare `Quality checks` come controllo obbligatorio su `main` tramite branch protection o ruleset, e richiedere il normale percorso di pull request.
-4. Provare in una pull request una regressione nota: il controllo deve fallire, conservare le evidenze e non attivare i job di pubblicazione. Correggerla prima del merge.
+- **Settings → Pages → Source: GitHub Actions** (`build_type: workflow`).
+- `main` richiede una pull request e il successo di **Quality checks**, proveniente dall'app GitHub Actions; il branch deve essere aggiornato rispetto a `main`.
+- Le regole valgono anche per gli amministratori; force push e cancellazione di `main` sono vietati. Non è richiesta l'approvazione di un secondo manutentore.
+- Le pull request sono abilitate per i collaboratori. Il metodo di integrazione già configurato nel repository è **rebase**.
 
-Alla lettura del 3 ottobre 2026, il repository usava Pages dalla root di `main` (`build_type: legacy`) e `main` risultava non protetta. La preparazione locale del workflow non modifica queste impostazioni remote. Il blocco operativo va confermato dopo l'attivazione; non si può dedurre dalla sola presenza del YAML. Riferimenti: [workflow personalizzati Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), [Playwright in CI](https://playwright.dev/docs/ci-intro).
+Queste impostazioni sono esterne al checkout: in un nuovo repository vanno applicate e verificate prima del primo rilascio. La sola presenza del YAML non attiva il gate. Una run fallita deve impedire il merge e saltare `Package site` e `Deploy Pages`; la source legacy da branch consentirebbe invece una pubblicazione indipendente. Riferimenti: [workflow personalizzati Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), [protezione dei branch](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [Playwright in CI](https://playwright.dev/docs/ci-intro).
+
+## Rilascio e tracciabilità
+
+Partire da un checkout pulito e aggiornato di `origin/main`, con Node e browser indicati sopra. Creare un branch `codex/<nome-intervento>`, applicare la modifica e aggiornare il changelog. Eseguire `npm run check` e `npm test`; per modifiche al harness eseguire anche `npm run test:regressions` con la cronologia originale disponibile.
+
+Preparare e controllare il pacchetto con `npm run package:site`: gli otto file di `scripts/site-files.cjs` devono coincidere con i sorgenti. `_site/` è ricreata dal comando e non va modificata a mano né aggiunta a Git. Il pacchetto seleziona esplicitamente gli asset: README, analisi, test, manifest e dipendenze restano fuori dalla pubblicazione. I font e le licenze sono già nel checkout; non si scaricano font durante il packaging.
+
+Committare, inviare il branch con `git push -u origin HEAD` e aprire una pull request verso `main` (`gh pr create`). Attendere il successo di `Quality checks` sul commit corrente (`gh pr checks --watch`); se `main` è avanzata, aggiornare il branch e attendere la nuova verifica. Integrare tramite rebase (`gh pr merge --rebase`). Il normale rilascio non richiede modifiche alla protezione né bypass amministrativi.
+
+Dopo il merge controllare la run **Site quality and Pages** sul nuovo SHA di `main`: devono riuscire, in ordine, `Quality checks`, `Package site` e `Deploy Pages`. Conservare nei riferimenti del rilascio SHA, URL della pull request e URL della run. Una CI positiva sulla pull request non dimostra da sola che il deploy di `main` sia riuscito.
+
+Verificare infine [il sito pubblico](https://yudeglispettri.github.io/cv/), i frammenti, i font e il caricamento senza errori. Per riscontrare la revisione servita, confrontare gli otto asset pubblici con quelli di quel commit (byte/hash); l'HTML contiene un canonical stabile, non un numero di versione. Un fallimento mantiene il deployment precedente: correggere il branch e ripetere il percorso. I report di errore CI scadono dopo sette giorni, quindi scaricare subito le evidenze necessarie tramite la pagina della run o `gh run download <run-id>`.
+
+## Rollback
+
+Individuare l'ultimo rilascio funzionante nelle run con **Deploy Pages** riuscito e annotarne SHA e URL. Da `origin/main` creare un nuovo branch `codex/rollback-<nome>` e usare `git revert <commit-difettoso>`; se il problema coinvolge più commit, ripristinarli dal più recente al più vecchio, verificando il diff finale. La cronologia lineare del rebase consente il revert dei singoli commit senza un merge parent.
+
+Eseguire gli stessi controlli e preparare il pacchetto; verificare che gli asset corrispondano alla revisione funzionante scelta oppure documentare le modifiche successive conservate intenzionalmente. Aprire una pull request e attendere il controllo obbligatorio, poi integrare e verificare la nuova run di deploy e gli asset pubblici. Il rollback è un nuovo rilascio verificato: conserva la cronologia e usa lo stesso gate. Se il difetto riguarda il workflow, correggere anche quel file nella pull request; il percorso di packaging e deploy deve restare dipendente dal controllo qualità.
+
+## Perimetro di supporto
+
+Il sito è una pagina italiana con direzione LTR. La baseline automatizzata comprende Chromium e WebKit forniti da Playwright **1.62.1**, su macOS e Ubuntu **24.04**, con font locali e fallback. Sono coperti viewport da **320 a 1440px**, portrait e landscape, testo al **200%**, spaziatura personalizzata, collegamenti nativi senza JavaScript o senza una delle API observer, movimento ridotto e regole print.
+
+Lo scrollspy è un miglioramento progressivo per i motori moderni con `IntersectionObserver`, `ResizeObserver`, CSS Grid e sintassi JavaScript ES2022 (compreso `Array.prototype.at`). Senza JavaScript restano disponibili contenuto e link HTML; l'offset dell'header usa il valore CSS nominale. L'assenza delle API observer è provata sui motori correnti, e non certifica parser JavaScript storici.
+
+WebKit automatizzato non equivale a una prova su Safari/iOS installati. Firefox, browser integrati e dispositivi fisici non fanno parte della matrice verificata. Screen reader, sequenza completa di tabulazione, zoom reale del browser e paginazione A4/Letter richiedono verifiche manuali dedicate: non vengono dichiarati verificati dalla suite. Multilingua e RTL richiedono un'estensione esplicita del perimetro e dei controlli.
