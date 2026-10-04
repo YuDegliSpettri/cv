@@ -3,7 +3,7 @@ const port = Number(process.env.CV_TEST_PORT || 4173);
 
 module.exports = defineConfig({
   testDir: './tests',
-  testMatch: ['**/site.spec.cjs', '**/fonts.spec.cjs', '**/security.spec.cjs'],
+  testMatch: ['**/site.spec.cjs', '**/navigation.spec.cjs', '**/fonts.spec.cjs', '**/security.spec.cjs'],
   forbidOnly: !!process.env.CI,
   fullyParallel: true,
   workers: process.env.CI ? 1 : 2,

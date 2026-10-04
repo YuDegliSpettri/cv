@@ -12,3 +12,5 @@
 - Documentati rilascio, rollback, verifica degli asset pubblicati e perimetro di supporto dei browser.
 - Annotata la lingua dei passaggi inglesi, mantenendo italiano il contesto circostante.
 - Conservati protocollo e risultati di verifica dell'accessibilità; corretti i titoli di sezione isolati a fondo pagina nella stampa A4/Letter.
+- Eliminata la dipendenza da `Array.at` nella navigazione; gestiti i template incompleti e accorpati gli aggiornamenti, evitando riscritture della voce corrente invariata.
+- Aggiunti 24 controlli di navigazione nella matrice browser e tre regressioni negative: suite completa di 222 test e dieci difetti originali verificabili.
