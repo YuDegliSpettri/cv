@@ -258,7 +258,7 @@ footer a:hover { color: var(--blue); }
   h1 { font-size: 3rem; }
   .resume-layout { display: block; padding-top: 1.5rem; }
   .resume-section { margin-bottom: 1rem; padding-bottom: 1rem; }
-  .section-heading { margin-bottom: 1rem; }
+  .section-heading { margin-bottom: 1rem; break-inside: avoid; break-after: avoid; }
   .experience, .skill-group { break-inside: avoid; }
   .contact-section { background: #fff; color: #000; border: 1px solid #bbb; padding: 1.5rem; grid-template-columns: 1fr 1fr; }
   .contact-intro .eyebrow, .contact-label, .contact-location { color: #333; }

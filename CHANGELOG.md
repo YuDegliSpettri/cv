@@ -10,3 +10,5 @@
 - Corretta l'emulazione del movimento ridotto nel harness; quattro controlli aggiuntivi verificano la preferenza e il CSS effettivi.
 - Pages collegato ad Actions e `Quality checks` obbligatorio su `main`, anche per gli amministratori, tramite pull request dei collaboratori.
 - Documentati rilascio, rollback, verifica degli asset pubblicati e perimetro di supporto dei browser.
+- Annotata la lingua dei passaggi inglesi, mantenendo italiano il contesto circostante.
+- Conservati protocollo e risultati di verifica dell'accessibilità; corretti i titoli di sezione isolati a fondo pagina nella stampa A4/Letter.
