@@ -15,7 +15,8 @@ module.exports = defineConfig({
   use: {
     baseURL: `http://127.0.0.1:${port}/cv/`,
     viewport: { width: 1440, height: 900 },
-    reducedMotion: 'reduce',
+    // Playwright 1.62.1 does not forward use.reducedMotion to its page fixture.
+    contextOptions: { reducedMotion: 'reduce' },
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure'
   },
