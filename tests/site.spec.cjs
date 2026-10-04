@@ -61,7 +61,7 @@ test('[CP-01] offset auto usa il vero IntersectionObserver senza margini NaN', a
 });
 
 for (const api of ['IntersectionObserver', 'ResizeObserver']) {
-  test(`[CP-01] navigazione senza ${api}`, async ({ page }) => {
+  test(`[CP-01] navigazione senza ${api}`, async ({ page }, testInfo) => {
     await page.addInitScript(api => delete window[api], api);
     await appendCss(page, 'html { font-size: 200%; }');
     await page.setViewportSize({ width: 390, height: 844 });
@@ -70,7 +70,19 @@ for (const api of ['IntersectionObserver', 'ResizeObserver']) {
     await activateSection(page, 'esperienze');
     await page.setViewportSize({ width: 844, height: 390 });
     await assertHeaderOffset(page);
-    await activateSection(page, 'competenze');
+    try { await activateSection(page, 'competenze'); }
+    catch (error) {
+      await testInfo.attach('fallback-navigation', { body: JSON.stringify(await page.evaluate(() => ({
+        hash: location.hash, scrollY, viewport: { width: innerWidth, height: innerHeight },
+        offset: getComputedStyle(document.documentElement).scrollPaddingTop,
+        headerHeight: document.querySelector('.site-header').getBoundingClientRect().height,
+        activeElement: document.activeElement.outerHTML,
+        sections: [...document.querySelectorAll('.resume-section, .contact-section')].map(section => ({
+          id: section.id, top: section.getBoundingClientRect().top
+        }))
+      })), null, 2), contentType: 'application/json' });
+      throw error;
+    }
   });
 }
 
