@@ -15,7 +15,10 @@ const cases = [
   { id: 'CP-03', grep: '\\[CP-03\\] offset misurato', project: 'chromium', error: /CSS offset/ },
   { id: 'A11Y-03', grep: '\\[A11Y-03\\] stampa light', project: 'chromium', error: /Print contrast/ },
   { id: 'SEC-02-AUD-01', grep: '\\[SEC-02/AUD-01\\] font locali', project: 'chromium', error: /Requests must stay on site origin/ },
-  { id: 'SEC-01', grep: '\\[SEC-01\\] blocco', project: 'chromium', error: /CSP must block external scripts/ }
+  { id: 'SEC-01', grep: '\\[SEC-01\\] blocco', project: 'chromium', error: /CSP must block external scripts/ },
+  { id: 'CP-02', grep: '\\[CP-02\\] ultima sezione', project: 'chromium', error: /sections\.at is not a function/ },
+  { id: 'CLN-03', grep: '\\[CLN-03\\] template senza footer', project: 'chromium', error: /No application pageerror/ },
+  { id: 'CLN-05', grep: '\\[CLN-05\\] aggiornamenti accorpati', project: 'chromium', error: /One section scan for the event burst/ }
 ];
 const summary = { revision, results: [] };
 
