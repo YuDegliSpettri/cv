@@ -1,0 +1,11 @@
+/analisi/
+/node_modules/
+/_site/
+/test-results/
+/playwright-report/
+/fonts/*.txt
+/.git/
+/.aws/
+/.codex/
+/.agents/
+/.DS_Store
