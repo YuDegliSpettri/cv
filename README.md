@@ -24,11 +24,18 @@ Il server ascolta solo su `127.0.0.1:4173`, reindirizza a `/cv/` e seleziona gli
 
 ```sh
 npm run check
+npm run test:static
 npm test
 npm run test:regressions
 ```
 
-`check` verifica sintassi JavaScript e presenza degli asset. `test` avvia e arresta autonomamente il server; la porta deve essere libera. Copre Chromium e WebKit sia con font locali sia con richieste font bloccate per verificare il fallback: geometria in otto viewport, testo al 200%, spaziatura personalizzata, sette frammenti, sezione corrente, header adattivo, cronologia, stampa, link senza JavaScript/API observer e riferimenti HTML. Le richieste fuori dall'origine locale sono bloccate, salvo le risposte innocue controllate dai test SEC-01 su una seconda origine di loopback. I test dei font verificano anche caricamento effettivo, licenze, assenza di tentativi di richieste esterne e aggiornamento dell'header dopo un caricamento ritardato. Le assertion usano il browser e il vero `IntersectionObserver`.
+`check` valida HTML, riferimenti ID/ARIA/frammenti e risorse HTML pubblicabili, presenza degli otto asset, CSS, JavaScript e formato. `test` avvia e arresta autonomamente il server; la porta deve essere libera. Copre Chromium e WebKit sia con font locali sia con richieste font bloccate per verificare il fallback: geometria in otto viewport, testo al 200%, spaziatura personalizzata, sette frammenti, sezione corrente, header adattivo, cronologia, stampa, link senza JavaScript/API observer e riferimenti HTML. Le richieste fuori dall'origine locale sono bloccate, salvo le risposte innocue controllate dai test SEC-01 su una seconda origine di loopback. I test dei font verificano anche caricamento effettivo, licenze, assenza di tentativi di richieste esterne e aggiornamento dell'header dopo un caricamento ritardato. Le assertion usano il browser e il vero `IntersectionObserver`.
+
+La validazione usa HTML-validate **11.16.2** (preset recommended + prettier), Stylelint **17.16.0** (regole mirate a errori CSS), ESLint **10.12.0** (recommended, sintassi browser ES2020) e Prettier **3.9.9**. Configurazioni e lockfile sono versionati. parse5 **8.0.1** legge i riferimenti HTML senza affidarsi al DOM corretto dal browser. `npm run format` applica il formato; `npm run format:check` lo verifica. Analisi, output generati, dipendenze e licenze originali dei font sono esclusi dalla formattazione. Il parametro vuoto delle fixture Playwright è l'unica eccezione al lint JavaScript ed è documentato nella configurazione.
+
+`test:static` esegue lo stesso validatore su una copia temporanea: la pagina integra deve passare, mentre dieci alterazioni devono fallire con exit code 1 e diagnosi specifica. Copre frammento assente, ID duplicato, riferimento ARIA rotto, asset rinominato, nesting HTML, proprietà CSS sconosciuta, globale JavaScript inesistente, formato errato e i due contratti di etichettatura accessibile. Nessun asset del checkout viene modificato; le diagnosi sono conservate in `test-results/static/`. Questo controllo viene eseguito anche nel gate CI.
+
+Al 4 ottobre 2026 `npm audit` segnala cinque voci high della stessa catena transitiva Stylelint → micromatch → braces **3.0.3**, senza patch disponibile per [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm). Riguarda l'esaurimento dello stack con pattern annidati ostili. Il controllo CSS invoca l'API su un unico file, con configurazione locale fissa e senza pattern forniti dagli utenti; gli strumenti non sono serviti o inclusi nel pacchetto pubblico. Non si applica il downgrade automatico a Stylelint 7 suggerito da npm: perderebbe supporto e regole attuali. Rivalutare la catena quando è disponibile una correzione; la segnalazione non è dichiarata risolta.
 
 La fixture registra le violazioni CSP e fa fallire i normali test se ne rileva. `tests/security.spec.cjs` verifica il blocco nativo degli script esterni e inline, la posizione della CSP prima delle risorse e l'assenza del Referer nei collegamenti in uscita. Le risposte di prova sono controllate e i test ripetono gli stessi stimoli senza il rispettivo meta per confermare che l'effetto dipenda dalla policy. Le sole violazioni ammesse sono quelle attese nel test del blocco CSP.
 
@@ -62,7 +69,7 @@ Queste impostazioni sono esterne al checkout: in un nuovo repository vanno appli
 
 ## Rilascio e tracciabilità
 
-Partire da un checkout pulito e aggiornato di `origin/main`, con Node e browser indicati sopra. Creare un branch `codex/<nome-intervento>`, applicare la modifica e aggiornare il changelog. Eseguire `npm run check` e `npm test`; per modifiche al harness eseguire anche `npm run test:regressions` con la cronologia originale disponibile.
+Partire da un checkout pulito e aggiornato di `origin/main`, con Node e browser indicati sopra. Creare un branch `codex/<nome-intervento>`, applicare la modifica e aggiornare il changelog. Eseguire `npm run check`, `npm run test:static` e `npm test`; per modifiche al harness eseguire anche `npm run test:regressions` con la cronologia originale disponibile.
 
 Preparare e controllare il pacchetto con `npm run package:site`: gli otto file di `scripts/site-files.cjs` devono coincidere con i sorgenti. `_site/` è ricreata dal comando e non va modificata a mano né aggiunta a Git. Il pacchetto seleziona esplicitamente gli asset: README, analisi, test, manifest e dipendenze restano fuori dalla pubblicazione. I font e le licenze sono già nel checkout; non si scaricano font durante il packaging.
 

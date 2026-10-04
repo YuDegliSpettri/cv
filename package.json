@@ -3,15 +3,29 @@
   "version": "1.0.0",
   "private": true,
   "description": "Sito CV statico e controlli di regressione",
-  "engines": { "node": ">=24" },
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "dev": "node scripts/serve.cjs",
-    "check": "node scripts/check.cjs",
+    "check": "node scripts/check.cjs && eslint . --max-warnings 0 && prettier . --check",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "test:static": "node scripts/check-static-regressions.cjs",
     "test": "playwright test",
     "test:fonts": "playwright test --config=playwright.fonts.config.cjs",
     "test:regressions": "node scripts/check-regressions.cjs",
     "test:report": "playwright show-report",
     "package:site": "node scripts/package-site.cjs"
   },
-  "devDependencies": { "@playwright/test": "1.62.1" }
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.62.1",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
+    "html-validate": "11.16.2",
+    "parse5": "8.0.1",
+    "prettier": "3.9.9",
+    "stylelint": "17.16.0"
+  }
 }
