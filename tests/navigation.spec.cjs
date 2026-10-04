@@ -33,7 +33,7 @@ const incompleteTemplates = [
   {
     name: 'indice',
     absent: '.index',
-    transform: (html) => html.replace(/<aside class="index">[\s\S]*?<\/aside>/, '')
+    transform: (html) => html.replace(/<aside\b[^>]*\bclass="index"[^>]*>[\s\S]*?<\/aside>/, '')
   },
   {
     name: 'footer',
