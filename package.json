@@ -1,0 +1,17 @@
+{
+  "name": "cv-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sito CV statico e controlli di regressione",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "dev": "node scripts/serve.cjs",
+    "check": "node scripts/check.cjs",
+    "test": "playwright test",
+    "test:fonts": "playwright test --config=playwright.fonts.config.cjs",
+    "test:regressions": "node scripts/check-regressions.cjs",
+    "test:report": "playwright show-report",
+    "package:site": "node scripts/package-site.cjs"
+  },
+  "devDependencies": { "@playwright/test": "1.62.1" }
+}
