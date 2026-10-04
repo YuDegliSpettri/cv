@@ -2,6 +2,8 @@
 
 ## 2026-10-04
 
+- Eseguiti e documentati percorsi nativi di tastiera, campioni di zoom fino al 200% e stampa Safari A4/Letter; esplicitate le prove VoiceOver e 400% ancora pendenti.
+- Corretta la frammentazione print di competenze, lingue ed esperienze; titoli mantenuti con la prima voce, con layout a schermo verificato invariato.
 - Aggiunti validazione HTML offline, lint CSS/JavaScript e formato uniforme con versioni fissate; dieci fixture negative verificano il gate statico locale e CI.
 - Rimossi tre residui CSS inutilizzati; assegnati nome accessibile all'indice e ruolo di gruppo al riepilogo del profilo.
 - Navigazione più robusta: offset dell'header misurato, indice adattivo e gestione dei limiti delle API browser.
